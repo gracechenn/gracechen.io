@@ -7,7 +7,6 @@ export type PageInfo = {
   file: string;
   bodyClass: string;
   title: string;
-  isArchive: boolean;
 };
 
 const CONTENT_DIR = path.join(process.cwd(), "src", "content");
@@ -24,12 +23,6 @@ export function getManifest(): Record<string, PageInfo> {
 
 export function getPage(key: string): PageInfo | undefined {
   return getManifest()[key];
-}
-
-export function getArchivePages(): PageInfo[] {
-  return Object.values(getManifest())
-    .filter((p) => p.isArchive)
-    .sort((a, b) => a.key.localeCompare(b.key));
 }
 
 export function getContentHtml(file: string): string {

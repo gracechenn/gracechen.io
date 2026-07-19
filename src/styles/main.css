@@ -3653,7 +3653,7 @@ a:hover {
   background-color: #fff;
   background-image: none;
   background-size: auto;
-  font-family: Work Sans, sans-serif;
+  font-family: Texgyreheros, sans-serif;
   font-weight: 400;
 }
 
@@ -4820,6 +4820,17 @@ a:hover {
   flex-direction: column;
   width: 260px;
   display: flex;
+}
+
+/* Not-found (/a) page tweaks, scoped to .body1 (404-exclusive in the clean site):
+   size the "Page Not Found" heading to the body text size, and grey the description. */
+.body1 .heading-7 {
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.body1 .utility-page-content > div {
+  color: #666;
 }
 
 .heading-7 {
@@ -6357,10 +6368,6 @@ a:hover {
   margin-bottom: 40px;
 }
 
-.lightbox-link {
-  margin-bottom: 10px;
-}
-
 .text-block-23 {
   padding-bottom: 5px;
   font-size: 18px;
@@ -7311,6 +7318,45 @@ a:hover {
   margin-left: 10px;
 }
 
+/* Project-card modal ("sizzle reel") — restores the original Webflow
+   interaction: clicking a card opens a full-viewport frosted overlay
+   (`.sizzle-reel`, styled further down) holding the project's media card
+   (`.card-image-home`), driven by homeCardFlip() in PageBehaviors.tsx. All the
+   overlay + media-card visuals reuse the original Webflow rules below; the only
+   addition here is the body scroll-lock applied while a modal is open. */
+html.modal-open,
+html.modal-open body {
+  overflow: hidden;
+}
+
+/* Roblox modal media is a lazy Vimeo embed; until it loads (or if it never
+   does) the card should read as a solid black frame rather than white/empty.
+   The video covers this once it's in. (Ember already uses #000 via its own
+   `.card-image-home.roblox.ember` rule.) */
+[data-sizzle-reel="roblox"] .card-image-home.roblox {
+  background-color: #000;
+}
+
+/* The reel media (e.g. the Roblox Vimeo) is display-only — no controls
+   (controls=0), autoplay + muted + loop. Let taps pass through the iframe so a
+   click ANYWHERE over the open modal, including over the video, closes it. */
+.sizzle-reel iframe {
+  pointer-events: none;
+}
+
+/* Transparent full-overlay capture layer (added by homeCardFlip) sitting ABOVE
+   the media card + its pointer-events:none iframe. Cross-origin iframes swallow
+   the window pointermove the custom cursor tracks on; this same-origin layer
+   keeps pointermove firing over the video (so the pixel cursor follows) and,
+   via `html.has-custom-cursor *` { cursor: none }, hides the native cursor over
+   the video. It's transparent + click-through-by-bubbling to the reel's
+   close-on-click, so tap-anywhere-to-close still works. */
+.reel-capture {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+}
+
 .div-block-37-copy {
   flex-flow: column;
   justify-content: flex-start;
@@ -7669,7 +7715,7 @@ a:hover {
 }
 
 .sizzle-reel {
-  z-index: 10;
+  z-index: 3000;
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   cursor: pointer;
@@ -7677,7 +7723,7 @@ a:hover {
   justify-content: center;
   align-items: center;
   display: none;
-  position: absolute;
+  position: fixed;
   inset: 0%;
   overflow: hidden;
 }
@@ -10498,11 +10544,53 @@ a:hover {
 
 /* Project-owned additions (folded in from Webflow inline <style> blocks). */
 ::selection { background-color: #ffd4f5; color: black; }
-/* Custom cursor follower (re-authored; replaces Webflow runtime mousemove IX). */
-.cursor-wrapper { pointer-events: none; position: fixed; top: 0; left: 0; }
+/* Custom cursor follower (re-authored; replaces Webflow runtime mousemove IX).
+   The original Webflow .cursor-wrapper rule (~line 3429) uses `inset: 0%` +
+   flex centering, making it a full-viewport container that centers the dot
+   mid-screen. The JS then translate3d()s that whole wrapper by (clientX,
+   clientY), pushing the dot ~half a viewport off the pointer. Reset the
+   surviving inset/size/flex props so the wrapper is a zero-size anchor at
+   (0,0); the JS translate math then lands its origin exactly on the pointer. */
+.cursor-wrapper {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  width: 0;
+  height: 0;
+  display: block;
+  /* Above the card-flip modal overlay (`.sizzle-reel`, z-index 3000) so the
+     custom cursor stays visible while a project modal is open. `pointer-events:
+     none` keeps tap-anywhere-to-close / X / Esc working. */
+  z-index: 4000;
+  will-change: transform;
+}
+/* Center the dot ON the wrapper origin (the pointer), regardless of its size. */
+.cursor { transform: translate(-50%, -50%); }
+/* Our `display: block` above sits later in source than the Webflow mobile
+   hide (~lines 9453/9635) and would otherwise re-show the cursor on phones;
+   re-assert the hide here so it wins on equal specificity. */
+@media screen and (max-width: 767px) {
+  .cursor-wrapper { display: none; }
+}
 @media (hover: hover) and (pointer: fine) {
   html.has-custom-cursor, html.has-custom-cursor * { cursor: none; }
 }
+/* Cursor hover states (re-authored; Webflow IX2 a-9/a-10 + a-72/a-73). The old
+   pink-dot cursor grows to 2x and fades over interactive elements (outQuart,
+   500ms); the newer "pixel" cursor swaps its default glyph (.hover) for the
+   pointer glyph (.point). `.is-hovering` is toggled by the cursor() behavior. */
+.cursor:not(.new) {
+  transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+.cursor:not(.new).is-hovering {
+  transform: translate(-50%, -50%) scale(2);
+  opacity: 0.75;
+}
+.cursor.new.is-hovering .hover { display: none; }
+.cursor.new.is-hovering .point { display: inline-block; }
 .sparkle {
   position: absolute; color: pink; font-size: 16px; pointer-events: none;
   opacity: 1; animation: sparkleFadeOut 0.8s ease-out forwards;
@@ -10522,4 +10610,66 @@ a:hover {
     background: #fff; padding: 1rem; text-align: center; z-index: 1000;
     box-shadow: 0 8px 24px rgba(0,0,0,0.08);
   }
+}
+/* The current-page nav link (e.g. "Work") had no hover effect because
+   `.link1.is-current` (0,2,0) appears after `.link1:hover` (0,2,0) in source
+   and won on equal specificity. Give the current non-brand link the same hover
+   color; the extra :not()/:hover raises specificity so it wins. The :not(.brand)
+   guard leaves the "Grace Chen" brand link on its own `.link1.brand:hover` rule. */
+.link1.is-current:not(.brand):hover {
+  color: var(--overlay-nav);
+}
+
+/* ==========================================================================
+   Home stacking-cards + folder-close scroll effect (project-owned).
+   Re-authored replacement for the removed Webflow IX2 interaction; driven by
+   `homeStack()` in src/components/PageBehaviors.tsx via GSAP ScrollTrigger.
+
+   The original `.card-section` is `position: fixed` with its own internal
+   `overflow: auto` scroll, so the window never scrolled and the sticky
+   `.card-div` cards never stacked.
+   When the home behavior mounts it adds `.home-scroll` to <html>, switching the
+   section into normal document flow so the *window* scrolls: the sticky cards
+   then layer on top of each other and the blue `.glass` folder halves close
+   over the stack near the end of the scroll with a 3D rotateX.
+   ========================================================================== */
+html.home-scroll .card-section {
+  position: relative;
+  inset: auto;
+  height: auto;
+  min-height: 100vh;
+  overflow: visible;
+}
+
+/* Tighten the between-card scroll so the stack surfaces quickly and feels
+   responsive (was 200px). This is a pure scroll spacer — cards overlap via
+   sticky positioning — so it only affects pacing, not the stacked look. */
+html.home-scroll .card-div {
+  margin-bottom: 80px;
+}
+
+/* Lead-in before the FIRST project card surfaces. The first card is sticky
+   (top: 0); this positive top margin (base rule uses -7vh) pushes its natural
+   position down so a slice of the card peeks into the viewport at rest and the
+   rest scrolls up into the stack. At 18vh (~30% viewport hero band) roughly the
+   top ~30% of card #1 is already visible without scrolling. Tunable knob:
+   higher = less peek / more runway before card #1, lower = more peek / sooner. */
+html.home-scroll .card-div.first {
+  margin-top: 18vh;
+}
+
+/* 3D context for the folder-close. Each blue `.glass` half rotates on the X
+   axis to shut over the stacked cards (driven by homeStack() in
+   PageBehaviors.tsx). Webflow sets `transform-style: preserve-3d` on the glass
+   but NO perspective and NO transform-origin (so rotateX renders orthograph- 
+   ically about the default center origin — the flatter, correct original look).
+   The back half sits behind the cards (z-index -1); the front flap closes over
+   them. */
+html.home-scroll .card-div._3.folder-copy {
+  z-index: -1;
+}
+html.home-scroll .card-div._3.folder .glass,
+html.home-scroll .card-div._3.folder-copy .glass.back {
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
 }

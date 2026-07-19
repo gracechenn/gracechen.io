@@ -13,7 +13,7 @@ export default function PageShell({ contentKey }: { contentKey: string }) {
   const info = getPage(contentKey);
   if (!info) notFound();
   const html = getContentHtml(info.file);
-  const behaviors = behaviorsFor(info.key, info.isArchive);
+  const behaviors = behaviorsFor(info.key);
   return (
     <>
       <div className={info.bodyClass || undefined} dangerouslySetInnerHTML={{ __html: html }} />

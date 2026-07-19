@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Static assets served verbatim (incl. the raw Webflow archive export and
+    // its bundled webflow.js/jQuery runtime) are vendored output, not source.
+    "public/**",
   ]),
 ]);
 

@@ -1,14 +1,13 @@
-/** Which re-authored client behaviors run on each page. */
+/** Which re-authored client behaviors run on each cleanly-reimplemented page.
+ *  (Archived pages are served as the raw Webflow export and run Webflow's own
+ *  runtime, so they have no entries here.) */
 export const BEHAVIORS: Record<string, string[]> = {
-  home: ["cursor", "nav", "lenis", "homeCards"],
+  home: ["cursor", "nav", "homeStack", "homeCardFlip", "homeCaptions", "taglineHovers"],
   play: ["cursor", "nav", "playRotate", "playHover"],
   about: ["cursor", "nav", "sparkles", "aboutCards"],
   "not-found": ["cursor", "nav"],
 };
 
-/** Archived snapshots get the shared decorations plus generic tabs. */
-export const ARCHIVE_DEFAULT = ["cursor", "nav", "tabs"];
-
-export function behaviorsFor(key: string, isArchive: boolean): string[] {
-  return BEHAVIORS[key] ?? (isArchive ? ARCHIVE_DEFAULT : ["cursor", "nav"]);
+export function behaviorsFor(key: string): string[] {
+  return BEHAVIORS[key] ?? ["cursor", "nav"];
 }

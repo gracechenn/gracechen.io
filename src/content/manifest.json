@@ -1,202 +1,30 @@
 {
-  "401": {
-    "key": "401",
-    "route": "/archive/401",
-    "file": "archive__401.html",
-    "bodyClass": "body1",
-    "title": "Protected page",
-    "isArchive": true
-  },
   "not-found": {
     "key": "not-found",
     "route": "/404",
     "file": "not-found.html",
     "bodyClass": "body1",
-    "title": "Not Found",
-    "isArchive": false
-  },
-  "about-2023": {
-    "key": "about-2023",
-    "route": "/archive/about-2023",
-    "file": "archive__about-2023.html",
-    "bodyClass": "body1",
-    "title": "About – Grace Chen",
-    "isArchive": true
-  },
-  "about-old": {
-    "key": "about-old",
-    "route": "/archive/about-old",
-    "file": "archive__about-old.html",
-    "bodyClass": "body",
-    "title": "About",
-    "isArchive": true
-  },
-  "art-prints": {
-    "key": "art-prints",
-    "route": "/archive/art-prints",
-    "file": "archive__art-prints.html",
-    "bodyClass": "art-print-body",
-    "title": "Art Prints",
-    "isArchive": true
-  },
-  "better-world": {
-    "key": "better-world",
-    "route": "/archive/better-world",
-    "file": "archive__better-world.html",
-    "bodyClass": "body1",
-    "title": "Better World x Design",
-    "isArchive": true
-  },
-  "brown-opp": {
-    "key": "brown-opp",
-    "route": "/archive/brown-opp",
-    "file": "archive__brown-opp.html",
-    "bodyClass": "body light",
-    "title": "Brown Opportunities",
-    "isArchive": true
-  },
-  "brown-opportunity": {
-    "key": "brown-opportunity",
-    "route": "/archive/brown-opportunity",
-    "file": "archive__brown-opportunity.html",
-    "bodyClass": "body1",
-    "title": "Brown Opps",
-    "isArchive": true
-  },
-  "bwxd-old": {
-    "key": "bwxd-old",
-    "route": "/archive/bwxd-old",
-    "file": "archive__bwxd-old.html",
-    "bodyClass": "body light",
-    "title": "Better World x Design",
-    "isArchive": true
-  },
-  "deck": {
-    "key": "deck",
-    "route": "/archive/deck",
-    "file": "archive__deck.html",
-    "bodyClass": "",
-    "title": "deck",
-    "isArchive": true
-  },
-  "hab": {
-    "key": "hab",
-    "route": "/archive/hab",
-    "file": "archive__hab.html",
-    "bodyClass": "body1",
-    "title": "Roblox 2023",
-    "isArchive": true
-  },
-  "hackatbrown": {
-    "key": "hackatbrown",
-    "route": "/archive/hackatbrown",
-    "file": "archive__hackatbrown.html",
-    "bodyClass": "body light",
-    "title": "Hack@Brown",
-    "isArchive": true
-  },
-  "home-2022": {
-    "key": "home-2022",
-    "route": "/archive/home-2022",
-    "file": "archive__home-2022.html",
-    "bodyClass": "body",
-    "title": "Grace Chen",
-    "isArchive": true
-  },
-  "home-2023": {
-    "key": "home-2023",
-    "route": "/archive/home-2023",
-    "file": "archive__home-2023.html",
-    "bodyClass": "body1",
-    "title": "Grace Chen",
-    "isArchive": true
+    "title": "Not Found"
   },
   "home": {
     "key": "home",
     "route": "/",
     "file": "home.html",
     "bodyClass": "body2 home",
-    "title": "Grace Chen",
-    "isArchive": false
+    "title": "Grace Chen"
   },
   "about": {
     "key": "about",
     "route": "/about",
     "file": "about.html",
     "bodyClass": "body2",
-    "title": "Grace Chen - About",
-    "isArchive": false
-  },
-  "play-2023": {
-    "key": "play-2023",
-    "route": "/archive/play-2023",
-    "file": "archive__play-2023.html",
-    "bodyClass": "body1",
-    "title": "Play – Grace Chen",
-    "isArchive": true
-  },
-  "play-old": {
-    "key": "play-old",
-    "route": "/archive/play-old",
-    "file": "archive__play-old.html",
-    "bodyClass": "body",
-    "title": "Play",
-    "isArchive": true
+    "title": "Grace Chen - About"
   },
   "play": {
     "key": "play",
     "route": "/play",
     "file": "play.html",
     "bodyClass": "body2",
-    "title": "Grace Chen - Playground",
-    "isArchive": false
-  },
-  "read": {
-    "key": "read",
-    "route": "/archive/read",
-    "file": "archive__read.html",
-    "bodyClass": "body1",
-    "title": "Readly",
-    "isArchive": true
-  },
-  "readly-old": {
-    "key": "readly-old",
-    "route": "/archive/readly-old",
-    "file": "archive__readly-old.html",
-    "bodyClass": "body light",
-    "title": "Readly",
-    "isArchive": true
-  },
-  "roblox-2022": {
-    "key": "roblox-2022",
-    "route": "/archive/roblox-2022",
-    "file": "archive__roblox-2022.html",
-    "bodyClass": "body1",
-    "title": "Roblox 2022",
-    "isArchive": true
-  },
-  "roblox-2023-old": {
-    "key": "roblox-2023-old",
-    "route": "/archive/roblox-2023-old",
-    "file": "archive__roblox-2023-old.html",
-    "bodyClass": "body light",
-    "title": "Roblox",
-    "isArchive": true
-  },
-  "roblox-growth": {
-    "key": "roblox-growth",
-    "route": "/archive/roblox-growth",
-    "file": "archive__roblox-growth.html",
-    "bodyClass": "body1",
-    "title": "Roblox 2023",
-    "isArchive": true
-  },
-  "roblox": {
-    "key": "roblox",
-    "route": "/archive/roblox",
-    "file": "archive__roblox.html",
-    "bodyClass": "body2",
-    "title": "Reimagining discovery on Roblox",
-    "isArchive": true
+    "title": "Grace Chen - Playground"
   }
 }
