@@ -7253,12 +7253,6 @@ a:hover {
   padding-top: 4vw;
 }
 
-.card-div._3.last {
-  z-index: -10;
-  opacity: 0;
-  transform: rotate(0);
-}
-
 .card-div._3.folder {
   flex-flow: column;
   justify-content: center;

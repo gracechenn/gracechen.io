@@ -153,6 +153,17 @@ function homeStack(): Cleanup {
     const CLOSE_END = 0.79;
     // Webflow fades the back in over 0%→50% of the close (opacity 0→1).
     const BACK_FADE = 0.5;
+    // The front flap's fold (rotateX/skewX) must not start until the folder is
+    // actually entering the viewport. The `y` sweep (20vh→-4vh over 0→CLOSE_END)
+    // is what raises the flap into view, but its rotateX/skewX previously ran from
+    // 0% too — so the fold was ~80% done while the flap was still below the fold.
+    // The flap's center is rotation-invariant (rotateX/skewX use the default
+    // center origin); the fold is held open (rotateX 90, skewX -35) until
+    // FOLD_START and runs FOLD_START→CLOSE_END, unfolding shut as the flap rises
+    // into view (the `y`/x sweep, the back half, the -4vh end and the trigger
+    // anchoring are all unchanged). Tuned to 0.30 (with the +560px end offset
+    // below) so the close plays while the folder is framed on screen.
+    const FOLD_START = 0.30;
     // Paused timeline driven manually by the smoothing loop (further below) rather
     // than by ScrollTrigger's own scrub, so the lag matches Webflow's per-frame
     // lerp exactly instead of GSAP's time-based catch-up.
@@ -168,18 +179,28 @@ function homeStack(): Cleanup {
 
     // Front flap (the dominant element): starts folded ~90deg open as a skewed
     // parallelogram (card visible behind), then rotates up and flattens to cover
-    // the stack (IX2 0% -> 79%). Values verified exact against the live Webflow
-    // DOM. transform-origin is left at the browser default (center, 50% 50%) —
+    // the stack. The positional sweep (x/y) runs IX2 0% -> 79%; the rotateX/skewX
+    // fold is gated to FOLD_START -> 79% (see below). Values verified exact against
+    // the live Webflow DOM. transform-origin is left at the browser default (center, 50% 50%) —
     // Webflow sets none — which keeps the corners aligned and makes the flap read
-    // as coming toward the viewer. The end `y` is raised above Webflow's decoded
-    // 0vh to -4vh (tuned) so the closed front top sits flush with / just under the
-    // back half's top and fully encloses the stacked cards (only the end vertical
-    // position differs from Webflow; timing/rate stays in sync with the back).
+    // as coming toward the viewer. The end `y` is tuned to -0.6vh (Webflow's
+    // decoded value was 0vh) for the closed front half's resting vertical
+    // position. Only the end vertical position differs from Webflow; timing/rate
+    // stays in sync with the back.
     folderTl.fromTo(
       front,
-      { rotationX: 90, skewX: -35, x: "10vw", y: "20vh" },
-      { rotationX: 7, skewX: -3, x: "-1vw", y: "-4vh", duration: CLOSE_END },
+      { x: "10vw", y: "20vh" },
+      { x: "-1vw", y: "-0.6vh", duration: CLOSE_END },
       0,
+    );
+    // Fold gated to start only as the flap enters the viewport (FOLD_START), held
+    // open before then via the immediate-render from-state, and settling shut at
+    // the same CLOSE_END as the positional sweep.
+    folderTl.fromTo(
+      front,
+      { rotationX: 90, skewX: -35 },
+      { rotationX: 7, skewX: -3, duration: CLOSE_END - FOLD_START },
+      FOLD_START,
     );
 
     if (back) {
@@ -221,12 +242,19 @@ function homeStack(): Cleanup {
     // over the ~1 viewport the folder takes to rise from the bottom of the screen
     // (open, last card revealed) to the top (shut, thank-you covering the stack).
     // start "top bottom+=20%" fires ~20% of a viewport early (less runway before
-    // the halves appear); end "top center" finishes when the folder top reaches
-    // mid-screen (shorter, snappier travel — closer to Webflow's feel).
+    // the halves appear); the end is "top center" pushed +END_OFFSET px later
+    // (further down-scroll) so progress 1.0 lands when the folder is framed on
+    // screen rather than while it's still rising into view. Given as an absolute
+    // scroll value (numeric) — the equivalent of "top center" (trigger top at
+    // viewport center) plus END_OFFSET px — because the "top center+=" string
+    // offset resolves the wrong direction here.
+    const END_OFFSET = 560; // px past "top center" (tuned)
+    const endScroll = () =>
+      frontCard.getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.5 + END_OFFSET;
     folderST = ScrollTrigger.create({
       trigger: frontCard,
       start: "top bottom+=20%", // Webflow 0% was "element starts entering"
-      end: "top center",
+      end: endScroll,
     });
     let smoothed = 0;
     folderTick = () => {
