@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { DECK_PASSWORD, GATE_HTML, GRANT_COOKIE, GRANT_TOKEN } from "@/lib/deckAuth";
+import { GATE_HTML, GRANT_COOKIE, GRANT_TOKEN } from "@/lib/deckAuth";
 
 /**
  * Password-gates the raw Webflow deck page with the Webflow-designed "Protected
@@ -52,7 +52,16 @@ export async function middleware(req: NextRequest) {
 
     const url = req.nextUrl.clone();
     url.pathname = "/archive/deck";
-    if (password === DECK_PASSWORD) {
+    // Read the password server-side at request time (never inlined/shipped to
+    // the client). Fail CLOSED: if it is unset or empty, no submission is ever
+    // accepted, and if the submitted value is empty it can never match.
+    const expected = process.env.DECK_PASSWORD ?? "";
+    if (!expected) {
+      console.warn(
+        "DECK_PASSWORD env var is unset/empty — deck gate is failing closed (denying all access).",
+      );
+    }
+    if (expected && password === expected) {
       url.search = "";
       const res = NextResponse.redirect(url, 303);
       res.cookies.set(GRANT_COOKIE, GRANT_TOKEN, {
