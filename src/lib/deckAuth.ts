@@ -10,9 +10,19 @@
  * committed to source. If the env var is unset, the gate fails closed.
  *
  * The unauthenticated password page is the Webflow "Protected page" design,
- * served (via a middleware rewrite) from `GATE_HTML` — kept under `/archive/` so
- * its relative `css/js/images` assets resolve.
+ * served (via a middleware rewrite) from `GATE_HTML`. Both it and the deck live
+ * under `public/archive/` and carry a `<base href="/archive/">` so their relative
+ * `css/js/images` assets resolve even though the visible URL is `DECK_PATH`.
  */
+
+// The single public (vanity) URL for the deck. Everything — the gate, the POST
+// target, the grant cookie scope, and the served deck — stays on this path, so
+// the browser's address bar never leaves `/untitled-deck`.
+export const DECK_PATH = "/untitled-deck";
+
+// The raw Webflow HTML files served (via internal middleware rewrites) at
+// `DECK_PATH`. Rewrites keep the visible URL on `DECK_PATH` while serving these.
+export const DECK_HTML = "/archive/deck.html";
 export const GATE_HTML = "/archive/deck-gate.html";
 
 // One-time grant: set only on a correct password POST and deleted by the very
