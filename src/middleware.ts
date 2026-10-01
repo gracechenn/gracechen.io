@@ -10,12 +10,12 @@ import { GATE_HTML, GRANT_COOKIE, GRANT_TOKEN } from "@/lib/deckAuth";
  *
  * The deck's real, working URL is the canonical `/archive/deck` (served from
  * `public/archive/deck.html` via the `/archive/:slug` rewrite, where its
- * relative `css/js/images` resolve under `/archive/`). The vanity `/deck` is
- * canonicalized to it.
+ * relative `css/js/images` resolve under `/archive/`). The vanity
+ * `/untitled-deck` is canonicalized to it.
  *
  * Flow (middleware runs BEFORE next.config rewrites, so the deck HTML is never
  * served without a live grant):
- *   - `/deck`, `/deck/*`                         → redirect to `/archive/deck`.
+ *   - `/untitled-deck`, `/untitled-deck/*`       → redirect to `/archive/deck`.
  *   - POST `/archive/deck[.html]` w/ correct pass → set the one-time grant cookie
  *     and redirect to `/archive/deck` (a GET the browser makes with that cookie).
  *   - POST with a wrong password                  → redirect to `/archive/deck?e=1`
@@ -31,8 +31,9 @@ import { GATE_HTML, GRANT_COOKIE, GRANT_TOKEN } from "@/lib/deckAuth";
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Canonicalize the vanity `/deck` (and any `/deck/*`) to `/archive/deck`.
-  if (pathname === "/deck" || pathname.startsWith("/deck/")) {
+  // Canonicalize the vanity `/untitled-deck` (and any `/untitled-deck/*`) to
+  // `/archive/deck`.
+  if (pathname === "/untitled-deck" || pathname.startsWith("/untitled-deck/")) {
     const url = req.nextUrl.clone();
     url.pathname = "/archive/deck";
     url.search = "";
@@ -98,5 +99,10 @@ export async function middleware(req: NextRequest) {
 // (css/js/images/fonts), the Webflow gate page itself, or the embedded iframe,
 // which must load freely so both the gate and the deck render intact.
 export const config = {
-  matcher: ["/deck", "/deck/:path*", "/archive/deck", "/archive/deck.html"],
+  matcher: [
+    "/untitled-deck",
+    "/untitled-deck/:path*",
+    "/archive/deck",
+    "/archive/deck.html",
+  ],
 };

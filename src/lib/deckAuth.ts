@@ -1,5 +1,5 @@
 /**
- * Server-side constants for the `/deck` password gate.
+ * Server-side constants for the `/untitled-deck` password gate.
  *
  * There is NO persisted authentication: the password must be entered on every
  * visit. A correct submit mints a SINGLE-USE grant cookie that the middleware
