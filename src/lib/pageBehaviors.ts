@@ -2,8 +2,8 @@
  *  (Archived pages are served as the raw Webflow export and run Webflow's own
  *  runtime, so they have no entries here.) */
 export const BEHAVIORS: Record<string, string[]> = {
-  home: ["cursor", "nav", "homeStack", "homeCardFlip", "homeCaptions", "taglineHovers"],
-  play: ["cursor", "nav", "playRotate", "playHover"],
+  home: ["cursor", "nav", "homeStack", "homeCardFlip", "homeCaptions", "taglineHovers", "mediaSkeletons"],
+  play: ["cursor", "nav", "playRotate", "playHover", "mediaSkeletons"],
   about: ["cursor", "nav", "sparkles", "aboutCards"],
   "not-found": ["cursor", "nav"],
 };

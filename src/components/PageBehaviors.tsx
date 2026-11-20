@@ -768,6 +768,50 @@ function aboutCards(): Cleanup {
   return () => cleanups.forEach((c) => c());
 }
 
+/**
+ * Home + Playground: shimmering skeleton placeholders for media that is still
+ * downloading. Each target <img> that hasn't finished loading gets
+ * `.is-media-loading` (an animated shimmer that also reserves box space, see
+ * main.css); on load (or error) it swaps to `.is-media-loaded` for a soft
+ * fade-in. Images already decoded at mount are left untouched so there's no
+ * flash; `loading="lazy"` images simply shimmer until they scroll into view and
+ * load, which doubles as a natural placeholder. No DOM wrapping — the classes go
+ * straight on the <img> — so the home flip/stack geometry is unaffected.
+ */
+function mediaSkeletons(): Cleanup {
+  const imgs = Array.from(
+    document.querySelectorAll<HTMLImageElement>("img.card-image.play, img.card-image1"),
+  );
+  if (!imgs.length) return;
+
+  const LOADING = "is-media-loading";
+  const LOADED = "is-media-loaded";
+  const cleanups: Array<() => void> = [];
+
+  for (const img of imgs) {
+    // Already decoded (cached/fast) — skip entirely to avoid a shimmer flash.
+    if (img.complete && img.naturalWidth > 0) continue;
+
+    img.classList.add(LOADING);
+    // `load` and `error` both resolve the box: a broken src should drop the
+    // reserved placeholder rather than shimmer forever.
+    const done = () => {
+      img.classList.remove(LOADING);
+      img.classList.add(LOADED);
+    };
+    img.addEventListener("load", done, { once: true });
+    img.addEventListener("error", done, { once: true });
+    cleanups.push(() => {
+      img.removeEventListener("load", done);
+      img.removeEventListener("error", done);
+      img.classList.remove(LOADING, LOADED);
+    });
+  }
+
+  if (!cleanups.length) return;
+  return () => cleanups.forEach((c) => c());
+}
+
 /** Playground: floating caption follows the pointer over each card image. */
 function playHover(): Cleanup {
   const cards = Array.from(document.querySelectorAll<HTMLElement>(".card"));
@@ -888,6 +932,7 @@ const REGISTRY: Record<string, () => Cleanup> = {
   homeStack,
   homeCardFlip,
   homeCaptions,
+  mediaSkeletons,
   sparkles,
   aboutCards,
   playHover,

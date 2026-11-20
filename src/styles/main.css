@@ -10667,3 +10667,39 @@ html.home-scroll .card-div._3.folder-copy .glass.back {
   transform-style: preserve-3d;
   will-change: transform, opacity;
 }
+
+/* ==========================================================================
+   Loading skeletons — shimmering placeholder boxes for media that hasn't
+   finished downloading (home project thumbnails + playground cards). Applied by
+   `mediaSkeletons()` in src/components/PageBehaviors.tsx: it tags each
+   not-yet-loaded <img> with `.is-media-loading` (the shimmer below), then swaps
+   it for `.is-media-loaded` (a soft fade-in) once the image's load/error fires.
+   Images already decoded at mount are left untouched (no flash); lazy images
+   simply shimmer until they scroll into view and load.
+   ========================================================================== */
+@keyframes media-shimmer {
+  0%   { background-position: 150% 0; }
+  100% { background-position: -150% 0; }
+}
+.is-media-loading {
+  background-color: #ececf1;
+  background-image: linear-gradient(100deg, #ececf1 30%, #f8f8fb 50%, #ececf1 70%);
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  animation: media-shimmer 1.4s ease-in-out infinite;
+}
+/* Reserve a visible box before the image reports its intrinsic size (otherwise
+   a height-less <img> collapses to nothing and there's no box to shimmer). The
+   ratios are per-context defaults — landscape playground recordings, and the
+   project-card thumbnails — and are dropped the instant the image loads so the
+   real aspect ratio takes over (homeStack re-refreshes ScrollTrigger on load). */
+img.card-image.play.is-media-loading { aspect-ratio: 16 / 10; height: auto; }
+img.card-image1.is-media-loading      { aspect-ratio: 3 / 2; }
+/* Gentle fade once the pixels are in. No fill-forwards, so any base opacity
+   (e.g. `.card-image1._1` at .95) is restored after the fade. */
+.is-media-loaded { animation: media-fade-in 0.45s ease; }
+@keyframes media-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .is-media-loading { animation: none; }
+  .is-media-loaded  { animation: none; }
+}
